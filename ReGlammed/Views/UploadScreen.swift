@@ -1,9 +1,9 @@
 import SwiftUI
-
+import FirebaseAuth
 struct UploadScreen: View {
 
     @StateObject private var firestoreManager = FirestoreManager()
-
+    @StateObject private var userManager = UserManager()
     @State private var listingType = "Sell"
 
     @State private var title = ""
@@ -70,35 +70,30 @@ struct UploadScreen: View {
                 Color.regCream
                     .ignoresSafeArea()
 
-                ScrollView {
+                ScrollView(showsIndicators: false) {
 
-                    VStack(spacing: 24) {
-
-                        VStack(alignment: .leading) {
-
-                            Text("Photos")
-                                .font(.headline)
-                                .foregroundColor(.regBrown)
-
+                    VStack(spacing: 22) {
+                        
+                        InputCard(title: "Photos") {
+                            
                             ImagePicker(
                                 selectedImages: $selectedImages
                             )
-
+                            
                             ScrollView(
                                 .horizontal,
                                 showsIndicators: false
                             ) {
-
-                                HStack {
-
+                                
+                                HStack(spacing: 12) {
+                                    
                                     ForEach(
                                         selectedImages.indices,
                                         id: \.self
                                     ) { index in
-
+                                        
                                         Image(
-                                            uiImage:
-                                                selectedImages[index]
+                                            uiImage: selectedImages[index]
                                         )
                                         .resizable()
                                         .scaledToFill()
@@ -106,52 +101,49 @@ struct UploadScreen: View {
                                             width: 100,
                                             height: 100
                                         )
-                                        .clipped()
-                                        .cornerRadius(14)
+                                        .clipShape(
+                                            RoundedRectangle(
+                                                cornerRadius: 16
+                                            )
+                                        )
                                     }
                                 }
                             }
                         }
-                        .padding()
-                        .background(.white)
-                        .cornerRadius(20)
-
-                        VStack(alignment: .leading) {
-
-                            Text("Listing Type")
-                                .font(.headline)
-                                .foregroundColor(.regBrown)
-
+                        
+                        InputCard(title: "Listing Type") {
+                            
                             Picker(
                                 "",
                                 selection: $listingType
                             ) {
-
+                                
                                 ForEach(
                                     listingTypes,
                                     id: \.self
                                 ) {
-
+                                    
                                     Text($0)
                                 }
                             }
                             .pickerStyle(.segmented)
                         }
-                        .padding()
-                        .background(.white)
-                        .cornerRadius(20)
-
-                        VStack(spacing: 18) {
+                        
+                        InputCard(title: "Basic Information") {
                             
                             TextField(
                                 "Title",
                                 text: $title
                             )
                             
+                            Divider()
+                            
                             TextField(
                                 "Brand",
                                 text: $brand
                             )
+                            
+                            Divider()
                             
                             Picker(
                                 "Category",
@@ -167,6 +159,8 @@ struct UploadScreen: View {
                                 }
                             }
                             
+                            Divider()
+                            
                             Picker(
                                 "Size",
                                 selection: $selectedSize
@@ -180,6 +174,8 @@ struct UploadScreen: View {
                                     Text($0)
                                 }
                             }
+                            
+                            Divider()
                             
                             Picker(
                                 "Condition",
@@ -195,6 +191,8 @@ struct UploadScreen: View {
                                 }
                             }
                             
+                            Divider()
+                            
                             TextField(
                                 "Description",
                                 text: $description,
@@ -202,39 +200,21 @@ struct UploadScreen: View {
                             )
                             .lineLimit(4)
                         }
-                        .padding()
-                        .background(.white)
-                        .cornerRadius(20)
-
                         if listingType == "Sell" {
 
-                            VStack(alignment: .leading) {
-
-                                Text("Price")
-                                    .font(.headline)
-                                    .foregroundColor(.regBrown)
+                            InputCard(title: "Price") {
 
                                 TextField(
-                                    "Selling Price",
+                                    "Price",
                                     text: $price
                                 )
                                 .keyboardType(.numberPad)
-
                             }
-                            .padding()
-                            .background(.white)
-                            .cornerRadius(20)
                         }
 
                         if listingType == "Rent" {
 
-                            VStack(spacing: 18) {
-
-                                TextField(
-                                    "Rental Duration (Days)",
-                                    text: $rentalDuration
-                                )
-                                .keyboardType(.numberPad)
+                            InputCard(title: "Rental Details") {
 
                                 TextField(
                                     "Rental Price Per Day",
@@ -242,97 +222,58 @@ struct UploadScreen: View {
                                 )
                                 .keyboardType(.numberPad)
 
+                                Divider()
+
+                                TextField(
+                                    "Rental Duration (Days)",
+                                    text: $rentalDuration
+                                )
+                                .keyboardType(.numberPad)
                             }
-                            .padding()
-                            .background(.white)
-                            .cornerRadius(20)
                         }
 
-                        VStack(alignment: .leading) {
-
-                            Text("Seller Contact")
-                                .font(.headline)
-                                .foregroundColor(.regBrown)
+                        InputCard(title: "Seller") {
 
                             TextField(
-                                "WhatsApp (+Country Code)",
+                                "WhatsApp Number (+Country Code)",
                                 text: $whatsapp
                             )
                             .keyboardType(.phonePad)
-
                         }
-                        .padding()
-                        .background(.white)
-                        .cornerRadius(20)
 
-                        Button {
+                        PrimaryButton(
+                            title: "Publish Listing",
+                            color: .regYellow
+                        ) {
 
-                            validateListing()
-
-                        } label: {
-
-                            Text(
-                                isUploading
-                                ?
-                                "Publishing..."
-                                :
-                                "Publish Listing"
-                            )
-                            .fontWeight(.bold)
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(
-                                isUploading
-                                ?
-                                Color.gray.opacity(0.4)
-                                :
-                                Color.regBlue
-                            )
-                            .foregroundColor(.regBrown)
-                            .cornerRadius(18)
+                            uploadListing()
                         }
-                        .disabled(isUploading)
                     }
                     .padding()
                 }
 
                 if isUploading {
 
-                    ZStack {
-
-                        Color.black
-                            .opacity(0.2)
-                            .ignoresSafeArea()
-
-                        VStack(spacing: 18) {
-
-                            ProgressView()
-                                .tint(.regBrown)
-                                .scaleEffect(1.8)
-
-                            Text("Uploading...")
-                                .foregroundColor(.regBrown)
-                                .fontWeight(.semibold)
-
-                        }
-                        .padding(35)
-                        .background(Color.regYellow)
-                        .cornerRadius(24)
-                    }
+                    LoadingOverlay(
+                        message: "Uploading Listing..."
+                    )
                 }
             }
-            .navigationTitle("Upload Listing")
+            .navigationTitle("Upload")
 
             .alert(
                 "Listing Published",
                 isPresented: $showSuccessAlert
             ) {
 
-                Button("Done") { }
+                Button("OK") {
+
+                    clearForm()
+                }
 
             } message: {
 
-                Text("Your listing is now live.")
+                Text("Your listing has been published successfully.")
             }
 
             .alert(
@@ -346,99 +287,42 @@ struct UploadScreen: View {
 
                 Text(validationMessage)
             }
-        }
-    }
-    func validateListing() {
+            .onAppear {
 
-        if selectedImages.isEmpty {
-
-            validationMessage =
-            "Please upload at least one image."
-
-            showValidationAlert = true
-            return
-        }
-
-        if title.trimmingCharacters(
-            in: .whitespaces
-        ).isEmpty {
-
-            validationMessage =
-            "Please enter a title."
-
-            showValidationAlert = true
-            return
-        }
-
-        if brand.trimmingCharacters(
-            in: .whitespaces
-        ).isEmpty {
-
-            validationMessage =
-            "Please enter a brand."
-
-            showValidationAlert = true
-            return
-        }
-
-        if description.trimmingCharacters(
-            in: .whitespaces
-        ).isEmpty {
-
-            validationMessage =
-            "Please enter a description."
-
-            showValidationAlert = true
-            return
-        }
-
-        if whatsapp.trimmingCharacters(
-            in: .whitespaces
-        ).isEmpty {
-
-            validationMessage =
-            "Please enter your WhatsApp number with country code."
-
-            showValidationAlert = true
-            return
-        }
-
-        if listingType == "Sell" {
-
-            if Int(price) == nil {
-
-                validationMessage =
-                "Please enter a valid selling price."
-
-                showValidationAlert = true
-                return
-            }
-
-        } else {
-
-            if Int(rentalPrice) == nil {
-
-                validationMessage =
-                "Please enter a rental price."
-
-                showValidationAlert = true
-                return
-            }
-
-            if Int(rentalDuration) == nil {
-
-                validationMessage =
-                "Please enter rental duration."
-
-                showValidationAlert = true
-                return
+                userManager.fetchUser()
             }
         }
-
-        uploadListing()
     }
 
     func uploadListing() {
+
+        guard !title.isEmpty else {
+
+            validationMessage = "Please enter a title."
+            showValidationAlert = true
+            return
+        }
+
+        guard !brand.isEmpty else {
+
+            validationMessage = "Please enter a brand."
+            showValidationAlert = true
+            return
+        }
+
+        guard !description.isEmpty else {
+
+            validationMessage = "Please enter a description."
+            showValidationAlert = true
+            return
+        }
+
+        guard !whatsapp.isEmpty else {
+
+            validationMessage = "Please enter your WhatsApp number with country code."
+            showValidationAlert = true
+            return
+        }
 
         isUploading = true
 
@@ -464,7 +348,6 @@ struct UploadScreen: View {
         }
 
         group.notify(queue: .main) {
-
             firestoreManager.addListing(
 
                 title: title,
@@ -489,12 +372,12 @@ struct UploadScreen: View {
 
                 imageURLs: uploadedURLs,
 
-                sellerName: "Shivanshi",
+                sellerID: Auth.auth().currentUser?.uid ?? "",
 
-                sellerWhatsApp: whatsapp
+                sellerName: userManager.userProfile?.name ?? "",
+
+                sellerWhatsApp: userManager.userProfile?.whatsapp ?? ""
             )
-
-            clearForm()
 
             isUploading = false
 
@@ -504,29 +387,23 @@ struct UploadScreen: View {
 
     func clearForm() {
 
+        listingType = "Sell"
+
         title = ""
-
         brand = ""
-
         description = ""
 
+        selectedCategory = "Tops"
+        selectedSize = "M"
+        selectedCondition = "Like New"
+
         price = ""
-
         rentalPrice = ""
-
         rentalDuration = ""
 
         whatsapp = "+91"
 
-        selectedImages.removeAll()
-
-        listingType = "Sell"
-
-        selectedCategory = "Tops"
-
-        selectedSize = "M"
-
-        selectedCondition = "Like New"
+        selectedImages = []
     }
 }
 

@@ -39,6 +39,12 @@
 		0A8324BB2FEB1515003F015D /* SavedCartManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8324BA2FEB150D003F015D /* SavedCartManager.swift */; };
 		0A8324BD2FEB1604003F015D /* SavedCartScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8324BC2FEB15FD003F015D /* SavedCartScreen.swift */; };
 		0A95580A2FED543600256588 /* MyListingsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9558092FED542A00256588 /* MyListingsScreen.swift */; };
+		0A95581F2FED613800256588 /* EditListingScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A95581E2FED612E00256588 /* EditListingScreen.swift */; };
+		0A9558212FED645900256588 /* EditProfileScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9558202FED644D00256588 /* EditProfileScreen.swift */; };
+		0A9558292FED6CDA00256588 /* EDLavonia-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0A9558282FED6CDA00256588 /* EDLavonia-Regular.ttf */; };
+		0A95582B2FED6EFB00256588 /* AppFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A95582A2FED6EF300256588 /* AppFont.swift */; };
+		0A9558312FED72C100256588 /* anaktoria.otf in Resources */ = {isa = PBXBuildFile; fileRef = 0A9558302FED72C100256588 /* anaktoria.otf */; };
+		0A9558332FED774400256588 /* SplashRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9558322FED773A00256588 /* SplashRootView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -91,6 +97,12 @@
 		0A8324BA2FEB150D003F015D /* SavedCartManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedCartManager.swift; sourceTree = "<group>"; };
 		0A8324BC2FEB15FD003F015D /* SavedCartScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedCartScreen.swift; sourceTree = "<group>"; };
 		0A9558092FED542A00256588 /* MyListingsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyListingsScreen.swift; sourceTree = "<group>"; };
+		0A95581E2FED612E00256588 /* EditListingScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditListingScreen.swift; sourceTree = "<group>"; };
+		0A9558202FED644D00256588 /* EditProfileScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileScreen.swift; sourceTree = "<group>"; };
+		0A9558282FED6CDA00256588 /* EDLavonia-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "EDLavonia-Regular.ttf"; sourceTree = "<group>"; };
+		0A95582A2FED6EF300256588 /* AppFont.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppFont.swift; sourceTree = "<group>"; };
+		0A9558302FED72C100256588 /* anaktoria.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = anaktoria.otf; sourceTree = "<group>"; };
+		0A9558322FED773A00256588 /* SplashRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashRootView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -102,6 +114,11 @@
 		0A8324622FE9B980003F015D /* ReGlammedUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = ReGlammedUITests;
+			sourceTree = "<group>";
+		};
+		0A95580B2FED5D0400256588 /* Components */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Components;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -158,12 +175,15 @@
 		0A8324762FE9BD8A003F015D /* ReGlammed */ = {
 			isa = PBXGroup;
 			children = (
+				0A95582A2FED6EF300256588 /* AppFont.swift */,
 				0A8324AA2FEAA761003F015D /* Info.plist */,
 				0A8324A82FEAA520003F015D /* GoogleService-Info.plist */,
+				0A9558252FED6CB600256588 /* Fonts */,
 				0A83247A2FE9BE27003F015D /* AppColors.swift */,
 				0A8324732FE9BD8A003F015D /* Assets.xcassets */,
 				0A8324742FE9BD8A003F015D /* ContentView.swift */,
 				0A8324752FE9BD8A003F015D /* ReGlammedApp.swift */,
+				0A9558322FED773A00256588 /* SplashRootView.swift */,
 				0A8324B12FEACFBF003F015D /* AppDelegate.swift */,
 				0A83248B2FE9C868003F015D /* Models */,
 				0A83247C2FE9BF87003F015D /* Views */,
@@ -175,18 +195,21 @@
 			isa = PBXGroup;
 			children = (
 				0A8324922FE9CF95003F015D /* ListingDetailScreen.swift */,
+				0A95580B2FED5D0400256588 /* Components */,
 				0A8324B82FEB0F4F003F015D /* FilterSheet.swift */,
 				0A9558092FED542A00256588 /* MyListingsScreen.swift */,
 				0A8324BC2FEB15FD003F015D /* SavedCartScreen.swift */,
 				0A8324902FE9C9A2003F015D /* RentScreen.swift */,
 				0A83248E2FE9C8DA003F015D /* BuyScreen.swift */,
 				0A8324B62FEAE81D003F015D /* ImagePicker.swift */,
+				0A9558202FED644D00256588 /* EditProfileScreen.swift */,
 				0A8324892FE9C73C003F015D /* ProfileScreen.swift */,
 				0A8324872FE9C3DB003F015D /* UploadScreen.swift */,
 				0A8324852FE9C2EE003F015D /* MainTabView.swift */,
 				0A8324832FE9C27B003F015D /* ProductCard.swift */,
 				0A8324812FE9C209003F015D /* HomeScreen.swift */,
 				0A83247F2FE9C076003F015D /* LoginScreen.swift */,
+				0A95581E2FED612E00256588 /* EditListingScreen.swift */,
 				0A83247D2FE9BFBE003F015D /* SplashScreen.swift */,
 			);
 			path = Views;
@@ -207,6 +230,15 @@
 			path = Models;
 			sourceTree = "<group>";
 		};
+		0A9558252FED6CB600256588 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				0A9558302FED72C100256588 /* anaktoria.otf */,
+				0A9558282FED6CDA00256588 /* EDLavonia-Regular.ttf */,
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -221,6 +253,9 @@
 			buildRules = (
 			);
 			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				0A95580B2FED5D0400256588 /* Components */,
 			);
 			name = ReGlammed;
 			packageProductDependencies = (
@@ -333,7 +368,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				0A8324792FE9BD8A003F015D /* Assets.xcassets in Resources */,
+				0A9558312FED72C100256588 /* anaktoria.otf in Resources */,
 				0A8324A92FEAA520003F015D /* GoogleService-Info.plist in Resources */,
+				0A9558292FED6CDA00256588 /* EDLavonia-Regular.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -363,8 +400,10 @@
 				0A95580A2FED543600256588 /* MyListingsScreen.swift in Sources */,
 				0A83247E2FE9BFC9003F015D /* SplashScreen.swift in Sources */,
 				0A8324BD2FEB1604003F015D /* SavedCartScreen.swift in Sources */,
+				0A9558212FED645900256588 /* EditProfileScreen.swift in Sources */,
 				0A8324B92FEB0F55003F015D /* FilterSheet.swift in Sources */,
 				0A83249E2FE9DDA9003F015D /* FirestoreManager.swift in Sources */,
+				0A95581F2FED613800256588 /* EditListingScreen.swift in Sources */,
 				0A8324B52FEAE7AF003F015D /* StorageManager.swift in Sources */,
 				0A83247B2FE9BE33003F015D /* AppColors.swift in Sources */,
 				0A8324822FE9C213003F015D /* HomeScreen.swift in Sources */,
@@ -372,11 +411,13 @@
 				0A8324B72FEAE822003F015D /* ImagePicker.swift in Sources */,
 				0A83248D2FE9C884003F015D /* Listing.swift in Sources */,
 				0A8324912FE9C9A7003F015D /* RentScreen.swift in Sources */,
+				0A95582B2FED6EFB00256588 /* AppFont.swift in Sources */,
 				0A8324B22FEACFCA003F015D /* AppDelegate.swift in Sources */,
 				0A8324862FE9C2F4003F015D /* MainTabView.swift in Sources */,
 				0A8324772FE9BD8A003F015D /* ReGlammedApp.swift in Sources */,
 				0A83248F2FE9C8E1003F015D /* BuyScreen.swift in Sources */,
 				0A8324A32FEA9A10003F015D /* AuthManager.swift in Sources */,
+				0A9558332FED774400256588 /* SplashRootView.swift in Sources */,
 				0A8324882FE9C3E4003F015D /* UploadScreen.swift in Sources */,
 				0A8324782FE9BD8A003F015D /* ContentView.swift in Sources */,
 				0A8324802FE9C07E003F015D /* LoginScreen.swift in Sources */,

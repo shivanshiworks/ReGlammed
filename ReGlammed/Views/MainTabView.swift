@@ -4,63 +4,163 @@ struct MainTabView: View {
 
     @State private var selectedTab = 0
 
-    init() {
-
-        UITabBar.appearance().backgroundColor = UIColor.white
-
-        UITabBar.appearance().unselectedItemTintColor = UIColor.gray
-    }
-
     var body: some View {
 
-        TabView(selection: $selectedTab) {
+        ZStack(alignment: .bottom) {
 
-            HomeScreen()
-                .tabItem {
+            Group {
 
-                    Image(systemName: "house.fill")
+                switch selectedTab {
 
-                    Text("Home")
+                case 0:
+                    NavigationStack {
+                        HomeScreen()
+                    }
+
+                case 1:
+                    NavigationStack {
+                        BuyScreen()
+                    }
+
+                case 2:
+                    NavigationStack {
+                        UploadScreen()
+                    }
+
+                case 3:
+                    NavigationStack {
+                        RentScreen()
+                    }
+
+                default:
+                    NavigationStack {
+                        ProfileScreen()
+                    }
                 }
-                .tag(0)
+            }
+            .transition(.opacity)
 
-            BuyScreen()
-                .tabItem {
+            HStack {
 
-                    Image(systemName: "bag.fill")
+                tabButton(
+                    icon: "house.fill",
+                    index: 0
+                )
 
-                    Text("Buy")
-                }
-                .tag(1)
+                Spacer()
 
-            UploadScreen()
-                .tabItem {
+                tabButton(
+                    icon: "bag.fill",
+                    index: 1
+                )
 
-                    Image(systemName: "plus.circle.fill")
+                Spacer()
 
-                    Text("Upload")
-                }
-                .tag(2)
+                uploadButton()
 
-            RentScreen()
-                .tabItem {
+                Spacer()
 
-                    Image(systemName: "hanger")
+                tabButton(
+                    icon: "hanger",
+                    index: 3
+                )
 
-                    Text("Rent")
-                }
-                .tag(3)
+                Spacer()
 
-            ProfileScreen()
-                .tabItem {
+                tabButton(
+                    icon: "person.fill",
+                    index: 4
+                )
 
-                    Image(systemName: "person.fill")
-
-                    Text("Profile")
-                }
-                .tag(4)
+            }
+            .padding(.horizontal,30)
+            .padding(.vertical,14)
+            .background(.white)
+            .clipShape(Capsule())
+            .shadow(
+                color: .black.opacity(0.12),
+                radius: 18,
+                x: 0,
+                y: 8
+            )
+            .padding(.horizontal,20)
+            .padding(.bottom,18)
         }
-        .tint(.regBrown)
+    }
+
+    @ViewBuilder
+
+    func tabButton(
+        icon: String,
+        index: Int
+    ) -> some View {
+
+        Button {
+
+            withAnimation(.spring()) {
+
+                selectedTab = index
+            }
+
+        } label: {
+
+            Image(systemName: icon)
+                .font(.title3)
+                .foregroundColor(
+                    selectedTab == index
+                    ? .regBrown
+                    : .gray
+                )
+                .frame(width:44,height:44)
+                .scaleEffect(
+                    selectedTab == index
+                    ? 1.15
+                    : 1
+                )
+        }
+    }
+
+    @ViewBuilder
+
+    func uploadButton() -> some View {
+
+        Button {
+
+            withAnimation(.spring(
+                response:0.35,
+                dampingFraction:0.65
+            )) {
+
+                selectedTab = 2
+            }
+
+        } label: {
+
+            ZStack {
+
+                Circle()
+                    .fill(Color.regBrown)
+                    .frame(width:68,height:68)
+
+                Circle()
+                    .stroke(
+                        Color.regYellow,
+                        lineWidth:4
+                    )
+                    .frame(width:74,height:74)
+
+                Image(systemName:"plus")
+                    .font(.title2.bold())
+                    .foregroundColor(.white)
+            }
+            .shadow(
+                color:.black.opacity(0.2),
+                radius:18,
+                x:0,
+                y:10
+            )
+            .offset(y:-24)
+        }
     }
 }
 

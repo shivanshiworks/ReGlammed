@@ -13,209 +13,284 @@ struct ProfileScreen: View {
     @State private var showSuccessAlert = false
     @State private var showFailureAlert = false
 
+    @State private var showLogoutAlert = false
+
     var body: some View {
 
         NavigationStack {
 
             ZStack {
 
-                Color.regCream
-                    .ignoresSafeArea()
+                LinearGradient(
 
-                ScrollView {
+                    colors: [
 
-                    VStack(spacing: 24) {
+                        Color.regCream,
 
-                        VStack(spacing: 14) {
+                        Color.regBlue.opacity(0.15)
 
-                            Circle()
-                                .fill(Color.regBlue)
-                                .frame(width: 110, height: 110)
-                                .overlay {
+                    ],
 
+                    startPoint: .top,
+
+                    endPoint: .bottom
+                )
+                .ignoresSafeArea()
+
+                ScrollView(showsIndicators: false) {
+
+                    VStack(spacing: 28) {
+                        
+                        // MARK: Profile Header
+                        
+                        ZStack {
+                            
+                            RoundedRectangle(
+                                cornerRadius: 32
+                            )
+                            .fill(Color.white)
+                            
+                            VStack(spacing: 18) {
+                                
+                                ZStack {
+                                    
+                                    Circle()
+                                        .fill(Color.regBlue)
+                                        .frame(
+                                            width: 120,
+                                            height: 120
+                                        )
+                                    
+                                    Circle()
+                                        .stroke(
+                                            Color.regYellow,
+                                            lineWidth: 6
+                                        )
+                                        .frame(
+                                            width: 128,
+                                            height: 128
+                                        )
+                                    
                                     Image(systemName: "person.fill")
-                                        .font(.system(size: 45))
+                                        .font(
+                                            .system(size: 48)
+                                        )
                                         .foregroundColor(.regBrown)
                                 }
-
+                                
+                                Text(
+                                    userManager.userProfile?.name ??
+                                    "Loading..."
+                                )
+                                .font(
+                                    .system(
+                                        size: 28,
+                                        weight: .bold
+                                    )
+                                )
+                                .foregroundColor(.regBrown)
+                                
+                                Text(
+                                    userManager.userProfile?.email ??
+                                    ""
+                                )
+                                .foregroundColor(.gray)
+                                
+                                HStack(spacing: 8) {
+                                    
+                                    Image(
+                                        systemName:
+                                            userManager.userProfile?.whatsappVerified == true
+                                        ?
+                                        "checkmark.seal.fill"
+                                        :
+                                            "clock.fill"
+                                    )
+                                    
+                                    Text(
+                                        
+                                        userManager.userProfile?.whatsappVerified == true
+                                        ?
+                                        
+                                        "Verified Seller"
+                                        
+                                        :
+                                            
+                                            "Verification Pending"
+                                    )
+                                }
+                                .font(.subheadline.bold())
+                                .foregroundColor(.regBrown)
+                                .padding(.horizontal,18)
+                                .padding(.vertical,8)
+                                .background(Color.regYellow)
+                                .clipShape(Capsule())
+                            }
+                            .padding(.vertical,30)
+                        }
+                        .shadow(
+                            color:.black.opacity(0.08),
+                            radius:18,
+                            x:0,
+                            y:10
+                        )
+                        // MARK: Quick Actions
+                        
+                        VStack(spacing: 16) {
+                            
+                            NavigationLink {
+                                
+                                MyListingsScreen()
+                                
+                            } label: {
+                                
+                                premiumRow(
+                                    
+                                    title: "My Listings",
+                                    
+                                    subtitle: "Manage your uploaded items",
+                                    
+                                    icon: "square.grid.2x2.fill",
+                                    
+                                    color: .regBlue
+                                )
+                            }
+                            
+                            NavigationLink {
+                                
+                                SavedCartScreen()
+                                
+                            } label: {
+                                
+                                premiumRow(
+                                    
+                                    title: "Saved Cart",
+                                    
+                                    subtitle: "View saved favourites",
+                                    
+                                    icon: "bag.fill",
+                                    
+                                    color: .regYellow
+                                )
+                            }
+                            
+                            NavigationLink {
+                                
+                                EditProfileScreen()
+                                
+                            } label: {
+                                
+                                premiumRow(
+                                    
+                                    title: "Edit Profile",
+                                    
+                                    subtitle: "Update your information",
+                                    
+                                    icon: "person.crop.circle",
+                                    
+                                    color: .regBlue
+                                )
+                            }
+                        }
+                        
+                        // MARK: Verification
+                        
+                        InputCard(
+                            title: "WhatsApp Verification"
+                        ) {
+                            
                             Text(
-                                userManager.userProfile?.name ??
-                                "Loading..."
-                            )
-                            .font(.title2)
-                            .fontWeight(.bold)
-                            .foregroundColor(.regBrown)
-
-                            Text(
-                                userManager.userProfile?.email ??
-                                ""
+                                "Enter your WhatsApp number with country code."
                             )
                             .foregroundColor(.gray)
-                        }
-
-                        VStack(spacing: 16) {
-
-                            NavigationLink {
-
-                                MyListingsScreen()
-
-                            } label: {
-
-                                profileRow(
-                                    title: "My Listings",
-                                    icon: "square.grid.2x2.fill"
-                                )
-                            }
-
-                            NavigationLink {
-
-                                SavedCartScreen()
-
-                            } label: {
-
-                                profileRow(
-                                    title: "Saved Cart",
-                                    icon: "bag.fill"
-                                )
-                            }
-
-                            Button {
-
-                            } label: {
-
-                                profileRow(
-                                    title: "Edit Profile",
-                                    icon: "pencil"
-                                )
-                            }
-                            .buttonStyle(.plain)
-                        }
-
-                        VStack(alignment: .leading, spacing: 18) {
-
-                            Text("Account Verification")
-                                .font(.headline)
-                                .foregroundColor(.regBrown)
-
+                            
                             TextField(
-                                "WhatsApp (+Country Code)",
+                                "+91XXXXXXXXXX",
                                 text: $whatsapp
                             )
                             .keyboardType(.phonePad)
-                            .padding()
-                            .background(.white)
-                            .cornerRadius(14)
-
-                            Button {
-
-                                print("SEND OTP CLICKED")
-
+                            
+                            Divider()
+                            
+                            PrimaryButton(
+                                
+                                title: "Send OTP",
+                                
+                                color: .regBlue
+                                
+                            ) {
+                                
                                 PhoneAuthManager.shared.sendOTP(
                                     phoneNumber: whatsapp
                                 ) { success in
-
+                                    
                                     DispatchQueue.main.async {
-
+                                        
                                         if success {
-
+                                            
                                             otpSent = true
                                         }
                                     }
                                 }
-
-                            } label: {
-
-                                Text("Send OTP")
-                                    .frame(maxWidth: .infinity)
-                                    .padding()
-                                    .background(Color.regBlue)
-                                    .foregroundColor(.regBrown)
-                                    .cornerRadius(14)
                             }
-
+                            
                             if otpSent {
-
+                                
+                                Divider()
+                                
                                 TextField(
                                     "Enter OTP",
                                     text: $otp
                                 )
                                 .keyboardType(.numberPad)
-                                .padding()
-                                .background(.white)
-                                .cornerRadius(14)
-
-                                Button {
-
+                                
+                                Divider()
+                                
+                                PrimaryButton(
+                                    
+                                    title: "Verify",
+                                    
+                                    color: .regYellow
+                                    
+                                ) {
+                                    
                                     PhoneAuthManager.shared.verifyOTP(
                                         code: otp
                                     ) { success in
-
+                                        
                                         DispatchQueue.main.async {
-
+                                            
                                             if success {
-
+                                                
                                                 userManager.saveWhatsApp(
                                                     number: whatsapp,
                                                     verified: true
                                                 )
-
+                                                
                                                 userManager.fetchUser()
-
+                                                
                                                 showSuccessAlert = true
-
+                                                
                                             } else {
-
+                                                
                                                 showFailureAlert = true
                                             }
                                         }
                                     }
-
-                                } label: {
-
-                                    Text("Verify OTP")
-                                        .frame(maxWidth: .infinity)
-                                        .padding()
-                                        .background(Color.regYellow)
-                                        .foregroundColor(.regBrown)
-                                        .cornerRadius(14)
                                 }
                             }
-
-                            HStack {
-
-                                Circle()
-                                    .fill(
-                                        userManager.userProfile?.whatsappVerified == true
-                                        ? Color.green
-                                        : Color.red
-                                    )
-                                    .frame(width: 10)
-
-                                Text(
-                                    userManager.userProfile?.whatsappVerified == true
-                                    ?
-                                    "Verified Seller"
-                                    :
-                                    "Not Verified"
-                                )
-                            }
                         }
-                        .padding()
-                        .background(.white)
-                        .cornerRadius(22)
+                        // MARK: Logout
 
-                        Button {
+                        PrimaryButton(
 
-                            try? Auth.auth().signOut()
+                            title: "Logout",
 
-                        } label: {
+                            color: Color.red.opacity(0.18)
 
-                            Text("Logout")
-                                .frame(maxWidth: .infinity)
-                                .padding()
-                                .background(Color.red.opacity(0.12))
-                                .foregroundColor(.red)
-                                .cornerRadius(16)
+                        ) {
+
+                            showLogoutAlert = true
                         }
                     }
                     .padding()
@@ -241,6 +316,31 @@ struct ProfileScreen: View {
             }
 
             .alert(
+                "Logout?",
+                isPresented: $showLogoutAlert
+            ) {
+
+                Button(
+                    "Logout",
+                    role: .destructive
+                ) {
+
+                    try? Auth.auth().signOut()
+                }
+
+                Button(
+                    "Cancel",
+                    role: .cancel
+                ) { }
+
+            } message: {
+
+                Text(
+                    "You'll need to sign in again to continue."
+                )
+            }
+
+            .alert(
                 "Verification Successful",
                 isPresented: $showSuccessAlert
             ) {
@@ -249,7 +349,9 @@ struct ProfileScreen: View {
 
             } message: {
 
-                Text("WhatsApp verified.")
+                Text(
+                    "Your WhatsApp number has been verified."
+                )
             }
 
             .alert(
@@ -261,26 +363,58 @@ struct ProfileScreen: View {
 
             } message: {
 
-                Text("Incorrect OTP.")
+                Text(
+                    "Incorrect OTP. Please try again."
+                )
             }
         }
     }
 
     @ViewBuilder
 
-    func profileRow(
+    func premiumRow(
+
         title: String,
-        icon: String
+
+        subtitle: String,
+
+        icon: String,
+
+        color: Color
+
     ) -> some View {
 
-        HStack {
+        HStack(spacing: 18) {
 
-            Image(systemName: icon)
-                .foregroundColor(.regBrown)
-                .frame(width: 28)
+            ZStack {
 
-            Text(title)
-                .foregroundColor(.regBrown)
+                RoundedRectangle(
+                    cornerRadius: 14
+                )
+                .fill(color)
+                .frame(
+                    width: 54,
+                    height: 54
+                )
+
+                Image(systemName: icon)
+                    .font(.title3)
+                    .foregroundColor(.regBrown)
+            }
+
+            VStack(
+                alignment: .leading,
+                spacing: 4
+            ) {
+
+                Text(title)
+                    .font(.headline)
+                    .foregroundColor(.regBrown)
+
+                Text(subtitle)
+                    .font(.caption)
+                    .foregroundColor(.gray)
+            }
 
             Spacer()
 
@@ -288,12 +422,24 @@ struct ProfileScreen: View {
                 .foregroundColor(.gray)
         }
         .padding()
-        .background(.white)
-        .cornerRadius(18)
+        .background(Color.white)
+        .clipShape(
+            RoundedRectangle(
+                cornerRadius: 22
+            )
+        )
+        .shadow(
+            color: .black.opacity(0.05),
+            radius: 10,
+            x: 0,
+            y: 5
+        )
     }
 }
-
 #Preview {
 
-    ProfileScreen()
+    NavigationStack {
+
+        ProfileScreen()
+    }
 }

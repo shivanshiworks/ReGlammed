@@ -4,316 +4,127 @@ struct ListingDetailScreen: View {
 
     let listing: Listing
 
-    @StateObject private var savedCartManager =
-        SavedCartManager()
-
     var body: some View {
 
-        ScrollView {
+        ScrollView(showsIndicators: false) {
 
-            VStack(
-                alignment: .leading,
-                spacing: 16
-            ) {
+            VStack(spacing: 22) {
 
-                if let firstImageURL =
-                    listing.imageURLs.first,
+                ListingImageCarousel(
+                    imageURLs: listing.imageURLs
+                )
 
-                   let url =
-                    URL(
-                        string:
-                            firstImageURL
-                    ) {
+                VStack(alignment: .leading, spacing: 14) {
 
-                    AsyncImage(
-                        url: url
-                    ) { image in
+                    Text(listing.title)
+                        .font(.system(size: 30, weight: .bold))
+                        .foregroundColor(.regBrown)
 
-                        image
-                            .resizable()
-                            .scaledToFill()
+                    Text(listing.brand)
+                        .foregroundColor(.gray)
 
-                    } placeholder: {
+                    if listing.type == "sell" {
 
-                        Rectangle()
-                            .fill(
-                                Color.regBlue
-                            )
-                    }
-                    .frame(
-                        height: 350
-                    )
-                    .clipped()
-                    .cornerRadius(
-                        20
-                    )
-
-                } else {
-
-                    Rectangle()
-                        .fill(
-                            Color.regBlue
-                        )
-                        .frame(
-                            height: 350
-                        )
-                        .cornerRadius(
-                            20
-                        )
-                }
-
-                VStack(
-                    alignment: .leading,
-                    spacing: 12
-                ) {
-
-                    Text(
-                        listing.title
-                    )
-                    .font(
-                        .largeTitle
-                    )
-                    .bold()
-
-                    Text(
-                        listing.brand
-                    )
-                    .foregroundColor(
-                        .regBrown
-                            .opacity(
-                                0.7
-                            )
-                    )
-
-                    Text(
-                        listing.description
-                    )
-
-                    Divider()
-
-                    if listing.type ==
-                        "sell" {
-
-                        Text(
-                            "₹\(listing.price ?? 0)"
-                        )
-                        .font(
-                            .title
-                        )
-                        .bold()
-                        .foregroundColor(
-                            .regBrown
-                        )
+                        Text("₹\(listing.price ?? 0)")
+                            .font(.system(size: 28, weight: .bold))
+                            .foregroundColor(.regBrown)
 
                     } else {
 
-                        Text(
-                            "₹\(listing.rentalPrice ?? 0) / day"
-                        )
-                        .font(
-                            .title
-                        )
-                        .bold()
-                        .foregroundColor(
-                            .regBrown
-                        )
+                        VStack(alignment: .leading, spacing: 6) {
 
-                        Text(
-                            "\(listing.rentalDuration ?? 0) days"
-                        )
-                    }
+                            Text("₹\(listing.rentalPrice ?? 0) / day")
+                                .font(.system(size: 28, weight: .bold))
+                                .foregroundColor(.regBrown)
 
-                    Divider()
-
-                    Text(
-                        "Seller"
-                    )
-                    .font(
-                        .headline
-                    )
-
-                    Text(
-                        listing.sellerName
-                    )
-
-                    Text(
-                        listing.sellerWhatsApp
-                    )
-
-                    Button {
-
-                        savedCartManager
-                            .toggleSaved(
-                                listingID:
-                                    listing.id
-                            )
-
-                    } label: {
-
-                        HStack {
-
-                            Image(
-                                systemName:
-                                    savedCartManager
-                                    .isSaved(
-                                        listingID:
-                                            listing.id
-                                    )
-                                ?
-                                "heart.fill"
-                                :
-                                "heart"
-                            )
-
-                            Text(
-                                savedCartManager
-                                .isSaved(
-                                    listingID:
-                                        listing.id
-                                )
-                                ?
-                                "Saved"
-                                :
-                                "Save To Cart"
-                            )
+                            Text("\(listing.rentalDuration ?? 0) Days")
+                                .foregroundColor(.gray)
                         }
-                        .frame(
-                            maxWidth:
-                                .infinity
-                        )
-                        .padding()
-                        .background(
-                            Color.regYellow
-                        )
-                        .foregroundColor(
-                            .regBrown
-                        )
-                        .cornerRadius(
-                            16
-                        )
                     }
 
-                    Button {
-
-                        let text =
-"""
-\(listing.title)
-
-\(listing.brand)
-
-₹\(listing.price ?? listing.rentalPrice ?? 0)
-"""
-
-                        let activityVC =
-                            UIActivityViewController(
-                                activityItems:
-                                    [text],
-                                applicationActivities:
-                                    nil
-                            )
-
-                        UIApplication
-                            .shared
-                            .connectedScenes
-                            .compactMap {
-                                $0
-                                    as? UIWindowScene
-                            }
-                            .first?
-                            .windows
-                            .first?
-                            .rootViewController?
-                            .present(
-                                activityVC,
-                                animated:
-                                    true
-                            )
-
-                    } label: {
-
-                        Text(
-                            "Share Listing"
-                        )
-                        .frame(
-                            maxWidth:
-                                .infinity
-                        )
-                        .padding()
-                        .background(
-                            Color.regBlue
-                        )
-                        .foregroundColor(
-                            .regBrown
-                        )
-                        .cornerRadius(
-                            16
-                        )
-                    }
+                    Text(listing.description)
+                        .foregroundColor(.regBrown)
+                        .padding(.top, 6)
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
                 .padding()
+                .background(.white)
+                .clipShape(
+                    RoundedRectangle(cornerRadius: 24)
+                )
+
+                SellerCard(
+                    sellerName: listing.sellerName,
+                    sellerWhatsApp: listing.sellerWhatsApp
+                )
+
+                ListingActionButtons(
+                    listing: listing
+                )
+
+                VStack(alignment: .leading, spacing: 12) {
+
+                    Text("More Like This")
+                        .font(.headline)
+                        .foregroundColor(.regBrown)
+
+                    RoundedRectangle(cornerRadius: 20)
+                        .fill(Color.regBlue.opacity(0.35))
+                        .frame(height: 140)
+                        .overlay {
+
+                            Text("Coming Soon")
+                                .foregroundColor(.regBrown)
+                        }
+                }
             }
+            .padding()
         }
-        .background(
-            Color.regCream
-        )
-        .navigationTitle(
-            "Listing"
-        )
-        .navigationBarTitleDisplayMode(
-            .inline
-        )
+        .background(Color.regCream)
+        .navigationTitle("Listing")
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 
 #Preview {
 
-    ListingDetailScreen(
+    NavigationStack {
 
-        listing: Listing(
+        ListingDetailScreen(
 
-            id: "1",
+            listing: Listing(
 
-            title:
-                "Sample Dress",
+                id: "1",
 
-            brand:
-                "Zara",
+                title: "Zara Satin Dress",
 
-            category:
-                "Dresses",
+                brand: "Zara",
 
-            size:
-                "M",
+                category: "Dress",
 
-            condition:
-                "Like New",
+                size: "M",
 
-            description:
-                "Beautiful dress",
+                condition: "Like New",
 
-            type:
-                "sell",
+                description: "Beautiful evening dress in excellent condition.",
 
-            price:
-                1000,
+                type: "sell",
+                sellerID: "",
 
-            rentalPrice:
-                nil,
+                price: 1800,
 
-            rentalDuration:
-                nil,
+                rentalPrice: nil,
 
-            imageURLs:
-                [],
+                rentalDuration: nil,
 
-            sellerName:
-                "Shivanshi",
+                imageURLs: [],
 
-            sellerWhatsApp:
-                "7483849515",
+                sellerName: "Shivanshi",
 
-            createdAt:
-                Date()
+                sellerWhatsApp: "+917483849515",
+
+                createdAt: Date()
+            )
         )
-    )
+    }
 }

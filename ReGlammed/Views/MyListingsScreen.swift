@@ -1,22 +1,25 @@
-//
-//  MyListingsScreen.swift
-//  ReGlammed
-//
-//  Created by Rashmi Priyadarshi on 25/06/26.
-//
-
 import SwiftUI
-
+import FirebaseAuth
 struct MyListingsScreen: View {
 
     @StateObject private var firestoreManager = FirestoreManager()
 
+    @State private var showingDeleteAlert = false
+    @State private var listingToDelete: Listing?
+
     var myListings: [Listing] {
 
-        firestoreManager.listings.filter {
+        firestoreManager.listings
 
-            $0.sellerName == "Shivanshi"
-        }
+            .filter {
+
+                $0.sellerID == Auth.auth().currentUser?.uid
+            }
+
+            .sorted {
+
+                $0.createdAt > $1.createdAt
+            }
     }
 
     var body: some View {
@@ -28,94 +31,105 @@ struct MyListingsScreen: View {
 
             if myListings.isEmpty {
 
-                VStack(spacing: 20) {
+                VStack(spacing: 18) {
 
                     Image(systemName: "hanger")
 
                         .font(.system(size: 55))
+
                         .foregroundColor(.regBrown)
 
                     Text("No Listings Yet")
+
                         .font(.title2)
+
                         .fontWeight(.bold)
+
                         .foregroundColor(.regBrown)
+
+                    Text("Your uploaded listings will appear here.")
+
+                        .foregroundColor(.gray)
                 }
 
             } else {
 
-                ScrollView {
+                ScrollView(showsIndicators: false) {
 
-                    LazyVStack(spacing: 20) {
+                    LazyVStack(spacing: 22) {
 
                         ForEach(myListings) { listing in
 
-                            VStack(alignment: .leading) {
+                            VStack(alignment: .leading, spacing: 14) {
 
-                                if let image =
-                                    listing.imageURLs.first,
+                                ProductCard(
 
-                                   let url =
-                                    URL(string: image) {
+                                    title: listing.title,
 
-                                    AsyncImage(url: url) { image in
+                                    brand: listing.brand,
 
-                                        image
-                                            .resizable()
-                                            .scaledToFill()
+                                    price: listing.price ??
+                                        listing.rentalPrice ??
+                                        0,
 
-                                    } placeholder: {
+                                    badge: listing.type.uppercased(),
 
-                                        Rectangle()
-                                            .fill(Color.regBlue)
-                                    }
-                                    .frame(height: 220)
-                                    .clipped()
-                                    .cornerRadius(16)
-                                }
+                                    imageURL: listing.imageURLs.first
+                                )
 
-                                Text(listing.title)
-                                    .font(.headline)
-                                    .foregroundColor(.regBrown)
+                                HStack(spacing: 14) {
 
-                                Text(listing.brand)
-                                    .foregroundColor(.gray)
+                                    NavigationLink {
 
-                                HStack {
-
-                                    Button {
-
-                                        // Edit comes next
-
-                                    } label: {
-
-                                        Text("Edit")
-                                            .frame(maxWidth: .infinity)
-                                            .padding()
-                                            .background(Color.regBlue)
-                                            .foregroundColor(.regBrown)
-                                            .cornerRadius(12)
-                                    }
-
-                                    Button {
-
-                                        firestoreManager.deleteListing(
-                                            id: listing.id
+                                        EditListingScreen(
+                                            listing: listing
                                         )
 
+
                                     } label: {
 
-                                        Text("Delete")
-                                            .frame(maxWidth: .infinity)
-                                            .padding()
-                                            .background(Color.red.opacity(0.15))
-                                            .foregroundColor(.red)
-                                            .cornerRadius(12)
+                                        HStack {
+
+                                            Image(systemName: "pencil")
+
+                                            Text("Edit")
+                                        }
+                                        .fontWeight(.semibold)
+                                        .frame(maxWidth: .infinity)
+                                        .padding()
+                                        .background(Color.regBlue)
+                                        .foregroundColor(.regBrown)
+                                        .clipShape(
+                                            RoundedRectangle(cornerRadius: 18)
+                                        )
+                                    }
+
+                                    Button {
+
+                                        listingToDelete = listing
+                                        showingDeleteAlert = true
+
+                                    } label: {
+
+                                        HStack {
+
+                                            Image(systemName: "trash")
+
+                                            Text("Delete")
+                                        }
+                                        .fontWeight(.semibold)
+                                        .frame(maxWidth: .infinity)
+                                        .padding()
+                                        .background(
+                                            Color.red.opacity(0.12)
+                                        )
+                                        .foregroundColor(.red)
+                                        .clipShape(
+                                            RoundedRectangle(cornerRadius: 18)
+                                        )
                                     }
                                 }
                             }
-                            .padding()
-                            .background(.white)
-                            .cornerRadius(22)
                         }
                     }
                     .padding()
@@ -123,6 +137,37 @@ struct MyListingsScreen: View {
             }
         }
         .navigationTitle("My Listings")
+
+        .alert(
+            "Delete Listing?",
+            isPresented: $showingDeleteAlert
+        ) {
+
+            Button(
+                "Delete",
+                role: .destructive
+            ) {
+
+                if let listing = listingToDelete {
+
+                    firestoreManager.deleteListing(
+                        id: listing.id
+                    )
+                }
+            }
+
+            Button(
+                "Cancel",
+                role: .cancel
+            ) { }
+
+        } message: {
+
+            Text(
+                "This action cannot be undone."
+            )
+        }
+
         .onAppear {
 
             firestoreManager.fetchListings()
@@ -132,5 +177,8 @@ struct MyListingsScreen: View {
 
 #Preview {
 
-    MyListingsScreen()
+    NavigationStack {
+
+        MyListingsScreen()
+    }
 }

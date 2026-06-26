@@ -14,7 +14,7 @@ struct Listing: Identifiable {
     let description: String
 
     let type: String
-
+    let sellerID: String
     let price: Int?
 
     let rentalPrice: Int?

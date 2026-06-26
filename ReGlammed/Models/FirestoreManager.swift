@@ -20,6 +20,7 @@ class FirestoreManager: ObservableObject {
         rentalPrice: Int?,
         rentalDuration: Int?,
         imageURLs: [String],
+        sellerID: String,
         sellerName: String,
         sellerWhatsApp: String
     ) {
@@ -44,7 +45,7 @@ class FirestoreManager: ObservableObject {
                 "rentalDuration": rentalDuration as Any,
 
                 "imageURLs": imageURLs,
-
+                "SellerID": sellerID,
                 "sellerName": sellerName,
                 "sellerWhatsApp": sellerWhatsApp,
 
@@ -81,7 +82,7 @@ class FirestoreManager: ObservableObject {
                         description: data["description"] as? String ?? "",
 
                         type: data["type"] as? String ?? "",
-
+                        sellerID: data["sellerID"] as? String ?? "",
                         price: data["price"] as? Int,
 
                         rentalPrice: data["rentalPrice"] as? Int,
@@ -90,6 +91,7 @@ class FirestoreManager: ObservableObject {
                         imageURLs: data["imageURLs"] as? [String] ?? [],
 
                         sellerName: data["sellerName"] as? String ?? "",
+                        
                         sellerWhatsApp: data["sellerWhatsApp"] as? String ?? "",
 
                         createdAt:
@@ -107,5 +109,32 @@ class FirestoreManager: ObservableObject {
         db.collection("listings")
             .document(id)
             .delete()
+    }
+    func updateListing(
+        listing: Listing
+    ) {
+
+        db.collection("listings")
+            .document(listing.id)
+            .updateData([
+
+                "title": listing.title,
+
+                "brand": listing.brand,
+
+                "category": listing.category,
+
+                "size": listing.size,
+
+                "condition": listing.condition,
+
+                "description": listing.description,
+
+                "price": listing.price as Any,
+
+                "rentalPrice": listing.rentalPrice as Any,
+
+                "rentalDuration": listing.rentalDuration as Any
+            ])
     }
 }

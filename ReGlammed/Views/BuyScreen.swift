@@ -9,16 +9,39 @@ struct BuyScreen: View {
     @State private var showFilters = false
 
     @State private var selectedCategory = ""
+
     @State private var selectedSize = ""
+
     @State private var selectedBrand = ""
 
     @State private var sortOption = "Newest First"
 
     let sortOptions = [
+
         "Newest First",
+
         "Oldest First",
+
         "Price Low To High",
+
         "Price High To Low"
+    ]
+
+    let categories = [
+
+        "All",
+
+        "Tops",
+
+        "Bottoms",
+
+        "Dresses",
+
+        "Outerwear",
+
+        "Ethnic Wear",
+
+        "Accessories"
     ]
 
     var brands: [String] {
@@ -44,19 +67,18 @@ struct BuyScreen: View {
 
             listings = listings.filter {
 
-                $0.title.localizedCaseInsensitiveContains(
-                    searchText
-                )
+                $0.title.localizedCaseInsensitiveContains(searchText)
+
                 ||
-                $0.brand.localizedCaseInsensitiveContains(
-                    searchText
-                )
+
+                $0.brand.localizedCaseInsensitiveContains(searchText)
             }
         }
 
         if !selectedCategory.isEmpty {
 
             listings = listings.filter {
+
                 $0.category == selectedCategory
             }
         }
@@ -64,6 +86,7 @@ struct BuyScreen: View {
         if !selectedSize.isEmpty {
 
             listings = listings.filter {
+
                 $0.size == selectedSize
             }
         }
@@ -71,6 +94,7 @@ struct BuyScreen: View {
         if !selectedBrand.isEmpty {
 
             listings = listings.filter {
+
                 $0.brand == selectedBrand
             }
         }
@@ -80,29 +104,32 @@ struct BuyScreen: View {
         case "Oldest First":
 
             listings.sort {
+
                 $0.createdAt < $1.createdAt
             }
 
         case "Price Low To High":
 
             listings.sort {
-                ($0.price ?? 0)
-                <
+
+                ($0.price ?? 0) <
                 ($1.price ?? 0)
             }
 
         case "Price High To Low":
 
             listings.sort {
-                ($0.price ?? 0)
-                >
+
+                ($0.price ?? 0) >
                 ($1.price ?? 0)
             }
 
         default:
 
             listings.sort {
-                $0.createdAt > $1.createdAt
+
+                $0.createdAt >
+                $1.createdAt
             }
         }
 
@@ -112,131 +139,297 @@ struct BuyScreen: View {
     var body: some View {
 
         NavigationStack {
-
+            
             ZStack {
-
-                Color.regCream
-                    .ignoresSafeArea()
-
-                ScrollView {
-
-                    VStack(
-                        alignment: .leading,
-                        spacing: 20
-                    ) {
-
-                        TextField(
-                            "Search",
-                            text: $searchText
-                        )
-                        .padding()
-                        .background(.white)
-                        .cornerRadius(16)
-
-                        HStack {
-
-                            Button("Filters") {
-
-                                showFilters = true
-                            }
-
-                            Spacer()
-
-                            Menu {
-
-                                ForEach(
-                                    sortOptions,
-                                    id: \.self
-                                ) { option in
-
-                                    Button(option) {
-
-                                        sortOption =
-                                            option
-                                    }
-                                }
-
-                            } label: {
-
-                                Label(
-                                    "Sort",
-                                    systemImage:
-                                        "arrow.up.arrow.down"
+                
+                LinearGradient(
+                    
+                    colors: [
+                        
+                        Color.regCream,
+                        
+                        Color.regBlue.opacity(0.08)
+                        
+                    ],
+                    
+                    startPoint: .top,
+                    
+                    endPoint: .bottom
+                )
+                .ignoresSafeArea()
+                
+                ScrollView(showsIndicators: false) {
+                    
+                    VStack(alignment: .leading, spacing: 24) {
+                        
+                        Text("Buy")
+                        
+                            .font(
+                                .system(
+                                    size: 40,
+                                    weight: .black
                                 )
+                            )
+                        
+                            .foregroundColor(.regBrown)
+                        
+                        HStack {
+                            
+                            Image(systemName: "magnifyingglass")
+                            
+                            TextField(
+                                "Search clothing...",
+                                text: $searchText
+                            )
+                            
+                            Button {
+                                
+                                showFilters = true
+                                
+                            } label: {
+                                
+                                Image(systemName: "slider.horizontal.3")
                             }
                         }
-
-                        ForEach(
-                            filteredListings
-                        ) { listing in
-
-                            NavigationLink {
-
-                                ListingDetailScreen(
-                                    listing: listing
-                                )
-
-                            } label: {
-
-                                ProductCard(
-                                    title:
-                                        listing.title,
-                                    brand:
-                                        listing.brand,
-                                    price:
-                                        listing.price ?? 0,
-                                    badge:
-                                        "SELL",
-                                    imageURL:
-                                        listing.imageURLs.first
-                                )
+                        .padding()
+                        .background(.white)
+                        .clipShape(
+                            RoundedRectangle(
+                                cornerRadius: 18
+                            )
+                        )
+                        
+                        HStack {
+                            
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                
+                                HStack(spacing: 10) {
+                                    
+                                    ForEach(categories, id: \.self) { category in
+                                        
+                                        categoryChip(category)
+                                    }
+                                }
                             }
-                            .buttonStyle(.plain)
+                            
+                            Spacer()
+                            
+                            Menu {
+                                
+                                ForEach(sortOptions, id: \.self) { option in
+                                    
+                                    Button(option) {
+                                        
+                                        sortOption = option
+                                    }
+                                }
+                                
+                            } label: {
+                                
+                                Image(systemName: "arrow.up.arrow.down")
+                                    .foregroundColor(.regBrown)
+                                    .padding(10)
+                                    .background(.white)
+                                    .clipShape(Circle())
+                            }
+                        }
+                        
+                        LazyVStack(spacing: 26) {
+                            
+                            ForEach(filteredListings) { listing in
+                                
+                                NavigationLink {
+                                    
+                                    ListingDetailScreen(
+                                        listing: listing
+                                    )
+                                    
+                                } label: {
+                                    
+                                    ProductCard(
+                                        
+                                        title: listing.title,
+                                        
+                                        brand: listing.brand,
+                                        
+                                        price: listing.price ?? 0,
+                                        
+                                        badge: "SELL",
+                                        
+                                        imageURL: listing.imageURLs.first
+                                    )
+                                }
+                                .buttonStyle(.plain)
+                            }
                         }
                     }
                     .padding()
                 }
             }
-            .navigationTitle("Buy")
+            .navigationBarHidden(true)
+
             .sheet(
                 isPresented: $showFilters
             ) {
 
                 FilterSheet(
+
                     selectedCategory:
                         $selectedCategory,
+
                     selectedSize:
                         $selectedSize,
+
                     selectedBrand:
                         $selectedBrand,
+
                     categories: [
+
                         "Tops",
+
                         "Bottoms",
+
                         "Dresses",
+
                         "Outerwear",
+
                         "Ethnic Wear",
+
                         "Accessories"
                     ],
+
                     sizes: [
+
                         "XS",
+
                         "S",
+
                         "M",
+
                         "L",
+
                         "XL",
+
                         "XXL",
+
                         "One Size"
                     ],
+
                     brands: brands
                 )
+                .presentationDetents([.medium,.large])
+                .presentationCornerRadius(30)
             }
+
             .onAppear {
 
                 firestoreManager.fetchListings()
             }
         }
+        .fadeSlide()
+    }
+
+    // MARK: Category Chip
+
+    @ViewBuilder
+
+    func categoryChip(
+        _ title: String
+    ) -> some View {
+
+        Button {
+
+            withAnimation(.spring()) {
+
+                selectedCategory =
+
+                title == "All"
+
+                ?
+
+                ""
+
+                :
+
+                title
+            }
+
+        } label: {
+
+            Text(title)
+
+                .font(.subheadline)
+
+                .fontWeight(.semibold)
+
+                .foregroundColor(
+
+                    selectedCategory == title ||
+
+                    (
+
+                        title == "All"
+
+                        &&
+
+                        selectedCategory.isEmpty
+
+                    )
+
+                    ?
+
+                    .white
+
+                    :
+
+                    .regBrown
+                )
+
+                .padding(.horizontal,16)
+
+                .padding(.vertical,10)
+
+                .background(
+
+                    selectedCategory == title ||
+
+                    (
+
+                        title == "All"
+
+                        &&
+
+                        selectedCategory.isEmpty
+
+                    )
+
+                    ?
+
+                    Color.regBrown
+
+                    :
+
+                    .white
+                )
+
+                .clipShape(Capsule())
+
+                .shadow(
+
+                    color:.black.opacity(0.05),
+
+                    radius:6,
+
+                    x:0,
+
+                    y:3
+                )
+        }
+        .buttonStyle(.plain)
     }
 }
 
 #Preview {
+
     BuyScreen()
 }

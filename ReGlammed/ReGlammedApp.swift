@@ -20,16 +20,8 @@ struct ReGlammedApp: App {
 
         WindowGroup {
 
-            if authManager.isLoggedIn {
-
-                MainTabView()
-                    .environmentObject(authManager)
-
-            } else {
-
-                LoginScreen()
-                    .environmentObject(authManager)
-            }
+            SplashRootView()
+                .environmentObject(authManager)
         }
     }
 }
