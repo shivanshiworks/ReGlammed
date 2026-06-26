@@ -105,7 +105,6 @@ Build and run the application.
 
 **Shivanshi Priyadarshi**
 
-LinkedIn: *(coming soon)*
 
 
 ### Give Fashion A Second Life.
